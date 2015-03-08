@@ -1,6 +1,9 @@
 package gameComponents;
 
 import gameComponents.gameTiles.GameTile;
+import gameComponents.gameTiles.LosableGameTile;
+import gameComponents.gameTiles.Marsh;
+import gameComponents.gameTiles.WallTile;
 import gameComponents.gameTiles.WinnableGameTile;
 
 /**
@@ -29,7 +32,7 @@ public class Gameboard {
 	/**
 	 * the array to keep all of our gametiles.
 	 */
-	private GameTile[][] gameTiles;
+	protected GameTile[][] gameTiles;
 	
 	/**
 	 * the player that will be playing
@@ -89,7 +92,7 @@ public class Gameboard {
 	protected void setPlayer(Player player){
 		this.player=player;
 		this.player.setGameboard(this);
-		this.gameTiles[this.boardSize/2][this.boardSize/2].registerPlayer(player);
+		this.gameTiles[this.getBoardSize()/2][this.getBoardSize()/2].registerPlayer(player);
 		
 	}
 	
@@ -98,10 +101,10 @@ public class Gameboard {
 	 * gametiles and in the correct locations.
 	 */
 	protected void makeGameTiles(){
-		this.gameTiles = new GameTile[this.boardSize][this.boardSize];
+		this.gameTiles = new GameTile[this.getBoardSize()][this.getBoardSize()];
 		
-		for(int i=0;i<this.boardSize;i++){
-			for(int u=0;u<this.boardSize;u++){
+		for(int i=0;i<this.getBoardSize();i++){
+			for(int u=0;u<this.getBoardSize();u++){
 				if(this.isCordEdge(u,i)){
 					this.gameTiles[u][i] = new WinnableGameTile("#",u,i,this);
 				}else{
@@ -109,6 +112,8 @@ public class Gameboard {
 				}
 			}
 		}
+		this.gameTiles[2][2] = new WallTile("S",2,2,this);
+		this.gameTiles[4][4] = new Marsh("M",4,4,this);
 	}
 	
 	/**
@@ -119,7 +124,7 @@ public class Gameboard {
 	 * @return returns true if the set really is in the edge of our gameboard and false if not.
 	 */
 	protected boolean isCordEdge(int x, int y){
-		if(x == 0 || y == 0 || (x == this.boardSize-1) || (y == this.boardSize-1) ){
+		if(x == 0 || y == 0 || (x == this.getBoardSize()-1) || (y == this.getBoardSize()-1) ){
 			return true;
 		}else{
 			return false;
@@ -136,8 +141,8 @@ public class Gameboard {
 		if(cord<0){
 			return 0;
 		}
-		if(cord>=this.boardSize){
-			return this.boardSize-1;
+		if(cord>=this.getBoardSize()){
+			return this.getBoardSize()-1;
 		}
 		return cord;
 	}
@@ -177,6 +182,7 @@ public class Gameboard {
 	 * this function will mark the game as lost.
 	 */
 	public void loseGame(){
+		System.out.println("All is lost");
 		this.gameState = GAME_LOST;
 	}
 	
@@ -184,6 +190,11 @@ public class Gameboard {
 	 * this function will mark the game as won.
 	 */
 	public void winGame(){
+		System.out.println("all is won");
 		this.gameState = GAME_WON;
+	}
+
+	public int getBoardSize() {
+		return boardSize;
 	}
 }
